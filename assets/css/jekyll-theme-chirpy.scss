@@ -1,0 +1,53 @@
+---
+---
+
+@use 'abstracts/variables' with (
+  $theme: '{{ site.theme_mode }}'
+);
+
+/* prettier-ignore */
+@use 'main
+{%- if jekyll.environment == 'production' -%}
+  .bundle
+{%- endif -%}
+';
+
+/* append your custom style below */
+
+#search-input {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: inherit;
+  color: inherit;
+}
+
+#search-input::placeholder {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  opacity: 1;
+}
+
+
+#sidebar #avatar img {
+  content: url("/assets/img/hedgehog-avatar-large.svg");
+}
+
+
+[data-bs-theme="dark"] #sidebar #avatar img {
+  content: url("/assets/img/hedgehog-avatar-large-dark.svg");
+}
+
+
+@font-face {
+  font-family: "SiteTitle";
+  src: url("/assets/fonts/title.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+#sidebar a.site-title {
+  font-family: "SiteTitle", "Source Sans Pro", sans-serif;
+  font-weight: 400;
+}
+
