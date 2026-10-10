@@ -1,15 +1,16 @@
----
----
-
-@use 'abstracts/variables' with (
-  $theme: '{{ site.theme_mode }}'
+--- --- @use 'abstracts/variables' with ($theme: '{{ site.theme_mode }}'
 );
 
 /* prettier-ignore */
 @use 'main
-{%- if jekyll.environment == 'production' -%}
-  .bundle
-{%- endif -%}
+ {
+  %- if jekyll.environment=='production' -%
+}
+
+.bundle {
+  %- endif -%
+}
+
 ';
 
 /* append your custom style below */
@@ -51,3 +52,40 @@
   font-weight: 400;
 }
 
+#breadcrumb a {
+  color: #6b7a99;
+}
+
+#breadcrumb a:hover {
+  color: #4a5878;
+}
+
+.content {
+  font-size: 1.0rem;
+  line-height: 2.0rem;
+  margin-top: 10px;
+}
+
+main h1 {
+  margin: 2.5rem 0 25px 0;
+  font-weight: bold;
+}
+
+
+#main-wrapper .content h2 {
+  border-top: 1px solid #d9dbde;
+  padding-top: 1.2rem;
+  margin-top: 2.8rem;
+  font-weight: bold;
+}
+
+[data-mode='dark'] #main-wrapper .content h2,
+[data-bs-theme='dark'] #main-wrapper .content h2 {
+  border-top-color: #3a3d42;
+}
+
+header h1+.post-meta {
+  border-bottom: 1px solid #d9dbde;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
