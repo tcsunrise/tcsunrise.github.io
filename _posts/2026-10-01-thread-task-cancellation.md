@@ -1,6 +1,7 @@
 ---
 title: 在线程任务中如何正确处理异常和中断？
 date: 2026-10-01
+description: 以咖啡下单为例，分析线程池任务遇到未知异常和线程中断时该如何正确处理。
 categories: 
 - Java
 tags:
@@ -196,7 +197,7 @@ default void close() {
 
 ## 0x03下单任务的最佳实践
 
-经过以上的分析，假设我们的下单接口实现会抛出InterruptedException异常，我们应该写出以下代码：
+经过以上的分析，假设我们的下单接口实现会抛出`InterruptedException`异常，我们应该写出以下代码：
 
 ```java
 public class CoffeeOrderDemo {

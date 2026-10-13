@@ -2,8 +2,110 @@
 
 <link rel="preload" href="/assets/fonts/title.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cn-fontsource-lxgw-neo-xi-hei-regular@1.0.1/font.css">
+
 <style>
+  /* Self-hosted latin subsets (from @fontsource), see assets/fonts */
+  @font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: "Crimson Pro";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/assets/fonts/crimson-pro-latin-400-italic.woff2") format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
   body { font-family: "Source Sans Pro", "LXGW Neo XiHei", "PingFang SC", sans-serif; }
   h1, h2, h3, h4, h5, h6 { font-family: Lato, "LXGW Neo XiHei", "PingFang SC", sans-serif; }
+  code, kbd, pre, samp, .highlight, .highlight code, .highlight pre {
+    font-family: "JetBrains Mono", "LXGW Neo XiHei", Consolas, "PingFang SC", monospace;
+    font-variant-ligatures: none;
+  }
+  .content blockquote:not([class*="prompt-"]) {
+    font-family: "Crimson Pro", "LXGW Neo XiHei", "PingFang SC", serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+  .content blockquote:not([class*="prompt-"]) em {
+    font-style: italic;
+    font-size: 0.92em;
+  }
+
+  /* Post description under the title: theme uses fw-light (300), which has no matching CJK weight */
+  header .post-desc {
+    font-family: "Source Sans Pro", "LXGW Neo XiHei", "PingFang SC", sans-serif;
+    font-weight: 400 !important;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text-muted-color);
+    margin: 1.5rem 0 1.75rem !important;
+    padding: 1rem 0.25rem;
+    border-top: 1px solid #d9dbde;
+    border-bottom: 1px solid #d9dbde;
+  }
+  [data-mode='dark'] header .post-desc,
+  [data-bs-theme='dark'] header .post-desc {
+    border-color: #3a3d42;
+  }
+
+  /* Collapsible long code blocks */
+  div.highlighter-rouge.code-collapsed .highlight {
+    max-height: 18rem;
+    overflow-y: hidden;
+    -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+    mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  }
+  div.highlighter-rouge .code-toggle {
+    display: block;
+    width: 100%;
+    padding: 0.35rem 0;
+    border: 0;
+    background: transparent;
+    font-size: 0.85rem;
+    color: var(--code-header-text-color);
+    cursor: pointer;
+  }
+  div.highlighter-rouge .code-toggle:hover {
+    color: var(--link-color);
+  }
 </style>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const COLLAPSED_HEIGHT = 18 * 16;
+
+    document.querySelectorAll('.content div.highlighter-rouge:not(.language-mermaid)').forEach((block) => {
+      const code = block.querySelector('.highlight');
+      if (!code || code.scrollHeight <= COLLAPSED_HEIGHT + 64) return;
+
+      const source = block.querySelector('.rouge-code') || code;
+      const lines = source.textContent.replace(/\n$/, '').split('\n').length;
+      const expandText = `展开全部（共 ${lines} 行）`;
+
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'code-toggle';
+      toggle.textContent = expandText;
+      toggle.addEventListener('click', () => {
+        // Expanding keeps the block top in place (grows downward);
+        // collapsing keeps the toggle button in place
+        const anchor = block.classList.contains('code-collapsed') ? block : toggle;
+        const before = anchor.getBoundingClientRect().top;
+        const collapsed = block.classList.toggle('code-collapsed');
+        toggle.textContent = collapsed ? expandText : '收起';
+        window.scrollBy({ top: anchor.getBoundingClientRect().top - before, behavior: 'instant' });
+      });
+
+      block.classList.add('code-collapsed');
+      block.appendChild(toggle);
+    });
+  });
+</script>
 
