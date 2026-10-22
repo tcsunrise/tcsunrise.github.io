@@ -14,6 +14,11 @@
 
 /* append your custom style below */
 
+/* ==========================================================================
+   Sidebar: search box
+   ========================================================================== */
+
+/* Search input: smaller font, inherit the rest from the sidebar */
 #search-input {
   font-family: inherit;
   font-size: 0.85rem;
@@ -21,6 +26,7 @@
   color: inherit;
 }
 
+/* Search placeholder: same look as the input text, fully opaque */
 #search-input::placeholder {
   font-family: inherit;
   font-size: inherit;
@@ -28,22 +34,31 @@
   opacity: 1;
 }
 
+/* ==========================================================================
+   Sidebar: avatar
+   ========================================================================== */
 
+/* Replace avatar with the hedgehog SVG (light mode), no hover animation */
 #sidebar #avatar img {
   content: url("/assets/img/hedgehog-avatar-large.svg");
   transition: none;
 }
 
+/* Disable the theme's zoom-on-hover effect */
 #sidebar #avatar img:hover {
   transform: none;
 }
 
-
+/* Dark mode avatar */
 [data-bs-theme="dark"] #sidebar #avatar img {
   content: url("/assets/img/hedgehog-avatar-large-dark.svg");
 }
 
+/* ==========================================================================
+   Sidebar: site title
+   ========================================================================== */
 
+/* Custom web font used only for the site title */
 @font-face {
   font-family: "SiteTitle";
   src: url("/assets/fonts/title.woff2") format("woff2");
@@ -51,44 +66,99 @@
   font-display: swap;
 }
 
+/* Apply the custom font to the site title */
 #sidebar a.site-title {
   font-family: "SiteTitle", "Source Sans Pro", sans-serif;
   font-weight: 400;
 }
 
+/* ==========================================================================
+   Top bar: breadcrumb
+   ========================================================================== */
+
+/* Breadcrumb link color */
 #breadcrumb a {
   color: #6b7a99;
 }
 
+/* Breadcrumb link hover color */
 #breadcrumb a:hover {
   color: #4a5878;
 }
 
+/* ==========================================================================
+   Post: body text
+   ========================================================================== */
+
+/* Post body font size and line height */
 .content {
   font-size: 1.0rem;
   line-height: 2.0rem;
   margin-top: 10px;
 }
 
+/* ==========================================================================
+   Post: headings and meta
+   ========================================================================== */
+
+/* Post title (h1) spacing and weight */
 main h1 {
   margin: 2.5rem 0 25px 0;
   font-weight: bold;
 }
 
-
+/* h2 in post body: bold with a separator line above */
 #main-wrapper .content h2 {
   border-top: 1px solid #d9dbde;
   padding-top: 1.2rem;
   font-weight: bold;
 }
 
+/* h2 separator line color in dark mode */
 [data-mode='dark'] #main-wrapper .content h2,
 [data-bs-theme='dark'] #main-wrapper .content h2 {
   border-top-color: #3a3d42;
 }
 
+/* Post meta (date, author, etc.) under the title: separator line below */
 header h1+.post-meta {
   border-bottom: 1px solid #d9dbde;
   padding-bottom: 1rem;
   margin-bottom: 1rem;
+}
+
+/* ==========================================================================
+   Post: footnotes
+   ========================================================================== */
+
+/* Footnote section: dashed separator, smaller gray text, tighter line height */
+.content .footnotes {
+  margin-top: 2rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed #d9dbde;
+  font-size: 0.85rem;
+  line-height: 1.6rem;
+  color: #6c757d;
+}
+
+/* Spacing between footnote items */
+.content .footnotes > ol > li:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+/* Inline code inside footnotes */
+.content .footnotes code {
+  font-size: 0.8rem;
+}
+
+/* Back-reference arrow (↩) size */
+.content .footnotes a.reversefootnote {
+  font-size: 0.7rem;
+}
+
+/* Footnote separator and text color in dark mode */
+[data-mode='dark'] .content .footnotes,
+[data-bs-theme='dark'] .content .footnotes {
+  border-top-color: #3a3d42;
+  color: #9aa0a6;
 }
