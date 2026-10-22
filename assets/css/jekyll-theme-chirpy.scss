@@ -162,3 +162,47 @@ header h1+.post-meta {
   border-top-color: #3a3d42;
   color: #9aa0a6;
 }
+
+/* ==========================================================================
+   Post: lists
+   ========================================================================== */
+
+/* Top-level lists in post body: tighter line height, LXGW WenKai for CJK only (Latin keeps Source Sans Pro) */
+.content > ul,
+.content > ol {
+  line-height: 1.7rem;
+  font-family: "Source Sans Pro", "LXGW WenKai", "LXGW Neo XiHei", "PingFang SC", serif;
+}
+
+/* Spacing between list items */
+.content > ul > li:not(:last-child),
+.content > ol > li:not(:last-child) {
+  margin-bottom: 0.4rem;
+}
+
+/* Unordered list: replace default bullets with small colored dots */
+.content > ul:not(.task-list) {
+  list-style: none;
+  padding-left: 1.2rem;
+}
+
+.content > ul:not(.task-list) > li {
+  position: relative;
+}
+
+.content > ul:not(.task-list) > li::before {
+  content: "";
+  position: absolute;
+  left: -0.8rem;
+  top: 0.62rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #6b7a99;
+}
+
+/* Bullet color in dark mode */
+[data-mode='dark'] .content > ul:not(.task-list) > li::before,
+[data-bs-theme='dark'] .content > ul:not(.task-list) > li::before {
+  background-color: #8a96b0;
+}
