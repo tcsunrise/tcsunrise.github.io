@@ -40,7 +40,7 @@ tags:
 是操作系统调度的最小单元”。不同的线程可以由操作系统调度在不同的CPU核心上同时运行，互不干扰，
 而且互相不知道彼此的存在。
 
-但是当线程之间共享一块内存区域，一份数据的时候，这时，线程之间就产生了一些对彼此的限制。它们
+但是当线程之间共享一块内存区域[^2]，一份数据的时候，这时，线程之间就产生了一些对彼此的限制。它们
 对同一份数据的访问受到彼此的影响。
 
 一般情况下Java对象是在JVM堆（_JVM heap_）上分配的，而堆是线程共享的内存区域。假设线程A在CPU
@@ -58,11 +58,11 @@ tags:
 
 上面简单介绍了一下锁的作用，接下来的篇幅主要介绍显式锁（_Explicit Lock_）。
 
-与显式锁相对的是隐式锁（_Implicit Lock_）[^2]，如果说`ReentrantLock`是显式锁，那么`synchronized`就
+与显式锁相对的是隐式锁（_Implicit Lock_）[^3]，如果说`ReentrantLock`是显式锁，那么`synchronized`就
 是隐式锁。实际上，Java中所说的隐式锁就是指`synchronized`关键字实现的锁，而显式锁在JDK类库中一共有两个，
 分别是`Lock`和`ReadWriteLock`两个接口为代表的显式锁实现。
 
-不管是显式锁还是隐式锁，在同一个时刻，有且只能被一个线程所持有[^3]，这也叫做锁的“互斥性”或“独占性”。
+不管是显式锁还是隐式锁，在同一个时刻，有且只能被一个线程所持有[^4]，这也叫做锁的“互斥性”或“独占性”。
 如果当前线程A持有锁L，那么其它需要获取锁L的线程B，线程C就必须等线程A释放锁L，如果线程A一直不释放，那么
 线程B和线程C就会永远等下去，这就在被锁L保护的状态变量上形成了串行化访问；也就是说线程A，B，C轮流获取锁L，
 所以轮流访问状态变量，下一个线程B只有等线程A释放了才能获取锁，才能访问由锁L保护的状态变量。
@@ -90,10 +90,10 @@ A等线程A自己释放锁，形成死锁。
 - 可超时的等待：区别于隐式锁只能无限期等待，显式锁在获取锁时可以设置**超时时间**，在指定时间内获取不到
 锁即立刻放弃；
 - 检查锁当前是否被占有，没有被其它线程持有则自动获取锁，如果被其它线程持有，则立刻返回，**不等待，不阻塞**；
-- 支持配置公平性[^4]：当前锁L被线程A持有，线程B和线程C在等待获取锁L，当线程A释放锁时，这时线程D来获取锁L；
+- 支持配置公平性[^5]：当前锁L被线程A持有，线程B和线程C在等待获取锁L，当线程A释放锁时，这时线程D来获取锁L；
 如果线程D可以在线程A释放锁后，获取到锁L，那么这个锁就是非公平锁，如果线程D排在线程C后面，等线程B和C获取后
 才能拿到锁，那么这个锁就是公平的。显式锁默认是非公平模式，可以在构造器中配置成公平模式，一般来讲，非公平锁
-的性能高于公平锁，尤其在锁竞争比较激烈的情况下[^5]。
+的性能高于公平锁，尤其在锁竞争比较激烈的情况下[^6]。
 
 Java的隐式锁是在JVM底层源码实现的，包括隐式锁的性能优化等等，显式锁的逻辑我们可以在JDK源码中详细地看
 到其实现，下面具体看一下相关的API。
@@ -101,13 +101,50 @@ Java的隐式锁是在JVM底层源码实现的，包括隐式锁的性能优化�
 
 ### Lock
 
+`Lock`[^7]接口一共定义了四个加锁方法和一个解锁方法：
+- void lock();
+- void lockInterruptibly() throws InterruptedException;
+- boolean tryLock();
+- boolean tryLock(long time, TimeUnit unit) throws InterruptedException;
+- void unlock();
 
+它们的使用很简单，遵循如下代码常用范式模版即可，但注意一定要结合`try`在`finally`块中显式调用`unlock()`方法！
 
-Lock[^6] 
+方式一：当前线程阻塞并等待获取锁。
+```java
+Lock l = ...;
+l.lock(); // or l.lockInterruptibly();
+try {
+    // access the resource protected by this lock
+} finally {
+    // 一定要在finally里释放锁
+  l.unlock();
+}
+```
+方式二：当前线程尝试获取锁，若当前锁不可用就立刻放弃，不在锁上等待。
+```java
+Lock lock = ...;
+if (lock.tryLock()) {
+  try {
+    // manipulate protected state
+  } finally {
+    // 一定要在finally里释放锁
+    lock.unlock();
+  }
+} else {
+  // perform alternative actions
+}
+```
+`ReentrantLock`是`Lock`接口的实现，在代码语法使用上是一样的。
 
 ### ReadWriteLock
 
-ReadWriteLock[^7]
+`ReadWriteLock`[^8]是另一个显式锁：读写锁，但是要注意它并没有继承`Lock`接口。它只定义了两个方法，一个方法
+用于获取读锁，另一个方法用于获取写锁：
+- Lock readLock();
+- Lock writeLock();
+
+
 
 ## ReentrantLock还是synchronized？
 Lock
@@ -120,15 +157,16 @@ Lock
 适的表达是：“同步”指的是协调多个线程对共享状态的访问从而保障程序的正确性，而“锁”只是其中的一种
 “同步机制”。在多线程环境下保证程序的正确性不一定非要通过“锁”来实现，还可以通过`volatile`关键字
 ，`final`关键字，原子变量等，更全面的要参考Java内存模型规范。
-[^2]: 显式锁还有其它书面上的叫法，比如内置锁（_instrinsic lock_），监视器锁（_monitor lock_），
+[^2]: 进程（_processes_）是操作系统分配资源的最小单元，其内存地址空间由进程内部所有线程（_threads_）共享。
+[^3]: 显式锁还有其它书面上的叫法，比如内置锁（_instrinsic lock_），监视器锁（_monitor lock_），
 互斥锁（_mutexes_），在代码层面的表现都是`synchronized`代码块和`synchronized`方法。
-[^3]: 有的锁是可以同时由多个线程同时持有的，这里主要想说的是独占锁或排他锁，比如读写锁中的读锁可以
+[^4]: 有的锁是可以同时由多个线程同时持有的，这里主要想说的是独占锁或排他锁，比如读写锁中的读锁可以
 有多个线程同时持有。
-[^4]:
-[^5]: 当由锁保护的代码块比较小（_fine-grained_），执行比较快，获得锁的线程可以快进快出时，由
+[^5]: `Lock`接口中并没有对公平性的要求，但`ReentrantLock`支持公平和非公平两种模式。
+[^6]: 当由锁保护的代码块比较小（_finer-grained_），执行比较快，获得锁的线程可以快进快出时，由
 于**线程的唤醒和调度需要时间**，如果线程D可以不排队，直接抢占线程A释放后的锁L，那么在线程B和线程C被
 唤醒开始抢锁之前，线程D甚至可以完成锁L的获取和退出，然后线程B或线程C获取到了锁，省去了线程D的挂起排队，
 可以显著提高锁的吞吐量，提高并发性能。
-[^6]: [java.util.concurrent.locks.Lock.java](https://github.com/openjdk/jdk/blob/dfacda488bfbe2e11e8d607a6d08527710286982/src/java.base/share/classes/java/util/concurrent/locks/Lock.java).
-[^7]: [java.util.concurrent.locks.ReadWriteLock.java](https://github.com/openjdk/jdk/blob/dfacda488bfbe2e11e8d607a6d08527710286982/src/java.base/share/classes/java/util/concurrent/locks/ReadWriteLock.java).
+[^7]: [java.util.concurrent.locks.Lock.java](https://github.com/openjdk/jdk/blob/dfacda488bfbe2e11e8d607a6d08527710286982/src/java.base/share/classes/java/util/concurrent/locks/Lock.java).
+[^8]: [java.util.concurrent.locks.ReadWriteLock.java](https://github.com/openjdk/jdk/blob/dfacda488bfbe2e11e8d607a6d08527710286982/src/java.base/share/classes/java/util/concurrent/locks/ReadWriteLock.java).
 
