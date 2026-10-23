@@ -1,5 +1,6 @@
 # Chirpy Starter
 
+[![Build and Deploy](https://github.com/tcsunrise/tcsunrise.github.io/actions/workflows/pages-deploy.yml/badge.svg)][deploy]&nbsp;
 [![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
 [![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
 
@@ -33,6 +34,7 @@ This repository is automatically updated with new releases from the theme reposi
 
 This work is published under [MIT][mit] License.
 
+[deploy]: https://github.com/tcsunrise/tcsunrise.github.io/actions/workflows/pages-deploy.yml
 [gem]: https://rubygems.org/gems/jekyll-theme-chirpy
 [chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
 [CD]: https://en.wikipedia.org/wiki/Continuous_deployment
