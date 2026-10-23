@@ -206,24 +206,3 @@ header h1+.post-meta {
 [data-bs-theme='dark'] .content > ul:not(.task-list) > li::before {
   background-color: #8a96b0;
 }
-
-/* ==========================================================================
-   Home: post list pageviews
-   ========================================================================== */
-
-/* Same gap as the theme puts before the category icon */
-#post-list .post-meta .pageviews {
-  margin-left: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  #post-list .post-meta .pageviews {
-    margin-left: 1.75rem;
-  }
-}
-
-/* The regular eye glyph is wider and heavier than calendar/folder: shrink it */
-#post-list .post-meta .pageviews i {
-  font-size: 0.9em;
-  vertical-align: 0.05em;
-}
