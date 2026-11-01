@@ -221,6 +221,11 @@ Detector
 5. spotbugs-idea Plugin: <https://plugins.jetbrains.com/plugin/14014-spotbugs-idea>
 
 
+https://github.com/spotbugs/spotbugs/blob/6816eb256805aa6eed1dced23e6a4aea08cc6660/spotbugs/etc/findbugs.xml
+https://github.com/mebigfatguy/fb-contrib/blob/d07b039b6d474d53b59c1b1b1d257fd765b9b82b/etc/findbugs.xml
+https://github.com/find-sec-bugs/find-sec-bugs/blob/ba1fa607d0640fda8a26e5479c87c1a98394c6d3/findsecbugs-plugin/src/main/resources/metadata/findbugs.xml
+
+
 
 [^cwe]: CWE: <https://cwe.mitre.org>
 [^owasp]: OWASP: <https://owasp.org>
