@@ -32,7 +32,7 @@ SpotBugs前身是Maryland大学维护的FindBugs™项目，但是这个项目�
 从这个项目fork出来，新项目就叫SpotBugs。相比而言，SpotBugs项目社区维护非常积极活跃，基本上每周都有
 多个新的提交合并。
 
-社区活跃性是一方面，SpotBugs有很多著名大型的开源项目都在使用，比如Apache ZooKeeper，Apache Kafka等，
+社区活跃性是一方面，SpotBugs有很多著名的大型开源项目都在使用，比如Apache ZooKeeper，Apache Kafka等，
 其内部包含了400多种常见的BUG代码模式，这些BUG都可以作为AI的编程工具，输出检查报告喂给AI，实现AI自己
 写代码，自己纠正。
 
@@ -41,19 +41,21 @@ SpotBugs前身是Maryland大学维护的FindBugs™项目，但是这个项目�
 SpotBugs基础上，扩展了300多种BugPattern，而且作者也在定期维护；同时还有一个find-sec-bugs插件，这
 个插件是主要是来检查Web应用中常见的安全漏洞，目前项目主页显示已经可以检测超过140多种常见的安全漏洞。
 
-SpotBugs内置的Bug清单和以上两个主要的插件其检查的Bug以及安全漏洞，包括了部分收集在CWE和OWASP目录中
-的，这表明其检测到的Bug问题是业界内常见的代码漏洞，使用起来也有据可依。
+SpotBugs内置的Bug清单和以上两个插件，它们检查的Bug模式以及安全漏洞绝大部分来源于CWE[^cwe]和OWASP[^owasp]目录，
+这表明其检测到的代码问题是业界内常见的代码漏洞，使用起来也有据可依，同时还能顺便找到对应的解决方案。
 
-
+本篇文章介绍SpotBugs的主要使用路径和常用命令，一篇文章无法介绍所有使用细节，更具体更全面的使用方式
+需要参考相关官方文档。
 
 ## 基本使用
 
 使用SpotBugs的场景主要有三种，分别是系统终端命令行、构建系统集成以及IDE界面开发环境，下面将逐一介绍
 每种方式的安装和使用方式。
 
-但是在上手使用之前，我们需要先了解SpotBugs的四个相关的GitHub项目：
+但是在上手使用之前，我们需要先了解SpotBugs的五个相关的GitHub项目：
 - `findbugsproject/findbugs`：SpotBugs的前身，现在基本上社区已经不维护了，上文已有相关介绍；
-- `spotbugs/spotbugs`：SpotBugs的核心组件，其它用法都是围绕这个项目构建的；
+- `spotbugs/spotbugs`：SpotBugs的核心组件，其它用法都是围绕这个核心构建的；
+- `spotbugs/spotbugs-annotations`：SpotBugs代码注解，用于辅助代码分析，比如`SuppressFBWarnings`；
 - `spotbugs/spotbugs-maven-plugin`：Maven插件，用于将SpotBugs应用到Maven构建的生命周期中；
 - `JetBrains/spotbugs-intellij-plugin`：JetBrains IDEA插件，用于在IDEA中界面化地使用SpotBugs。
 
@@ -62,39 +64,137 @@ SpotBugs内置的Bug清单和以上两个主要的插件其检查的Bug以及安
 SpotBugs虽说是用来检查Java程序代码的，但其实其本身也是用Java实现的；它的命令行使用方式和Java业界
 其它工具使用方式基本一样，要不就是直接执行jar文件，但是直接执行jar不方便，所以还会附带常见操作系统
 的脚本，比如Windows的.bat和.ps1，类Unix系统的.sh脚本，使用相应的平台脚本间接调用jar文件。比如常用
-的Apache Maven，Apache ZooKeeper，Alibaba Arthas等，都是这种方式。
+的Apache Maven，Apache ZooKeeper，Alibaba Arthas[^arthas]等，都是这种方式。
 
-在命令行中使用Java命令行工具一般就是三个步骤：
+在命令行中使用Java命令行工具一般就是通用的三个步骤：
 1. 下载分发包压缩文件并解压；
-2. 配置系统环境变量，把脚本bin目录配置到系统路径中；
-3. 在系统终端命令行执行对应的help命令，查看可用命令。
+2. 配置系统环境变量，把脚本bin目录配置到系统路径；
+3. 在系统终端命令行执行相关命令。
 
-SpotBugs下载地址：<https://github.com/spotbugs/spotbugs/releases#release-4.10.5>
+下面介绍一下在Windows上配置命令行调用环境的步骤，其它操作系统类似地可以参考上述步骤（或者询问AI，
+比如ChatGPT，豆包，DeepSeek等）。
 
+先从SpotBugs的GitHub Release中下载安装包压缩文件，这里以版本4.10.5为例。SpotBugs 4.10.5下载地
+址：<https://github.com/spotbugs/spotbugs/releases#release-4.10.5>
+
+如下图，SpotBugs的Release Assets包含.zip和.tgz两种格式，Windows上下载.zip格式即可。
 ![SpotBugs GitHub Release Assets](/assets/img/post/spotbugs-github-release-assets-light.png){: .light .rounded-10 .shadow }
 ![SpotBugs GitHub Release Assets](/assets/img/post/spotbugs-github-release-assets-dark.png){: .dark .rounded-10 .shadow }
 
+下载完成后会得到压缩文件spotbugs-4.10.5.zip，然后将其解压，得到目录spotbugs-4.10.5。配置Windows
+操作系统环境变量`SPOTBUGS_HOME`，变量值为解压得到的完整的目录路径，比如`D:\ISoftware\spotbugs-4.10.5`，
+即`SPOTBUGS_HOME=D:\ISoftware\spotbugs-4.10.5`。这一步和配置Maven环境变量`MAVEN_HOME`是一样的类
+似操作。
 
+安装的最后一步是配置`PATH`变量，将`%SPOTBUGS_HOME%\bin`配置到系统的`PATH`变量即可。最后打开系统终端
+执行`spotbugs -version`，输出版本号就代表安装成功。
+
+由于很少在命令行中直接使用SpotBugs，如果遇到需要在命令行手动执行的情形，参考官方手册里的使用说明即可
+[Running SpotBugs](https://spotbugs.readthedocs.io/en/stable/running.html)。
 
 
 ### Maven项目集成
 
+与Maven项目集成是SpotBugs最主要的使用场景，这种情况下方便本地人工触发SpotBugs，进行代码检查和更正，
+还可以结合到现有的CI/CD流程中，比如GitLab Pipeline等。
+
+#### 配置依赖
+
+在Maven项目集成SpotBugs比较简单，在根目录的pom.xml文件加上以下两个配置即可：
+1. 在dependencies中配置`spotbugs-annotations`依赖；
+2. 在pluginManagement中配置`spotbugs-maven-plugin`插件。
+
+```xml
+<properties>
+    <spotbugs.version>4.8.6</spotbugs.version>
+    <spotbugs-maven-plugin.version>4.8.6.6</spotbugs-maven-plugin.version>
+</properties>
+```
+{: file="pom.xml" }
+添加`spotbugs-annotations`依赖，用于在.java源码上添加注释：
+```xml
+<dependencies>
+    <!-- SpotBugs Annotations -->
+    <dependency>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-annotations</artifactId>
+        <version>${spotbugs.version}</version>
+        <scope>provided</scope>
+    </dependency>
+</dependencies>
+```
+{: file="pom.xml" }
+将`spotbugs-maven-plugin`加入到Maven的构建依赖中，便于通过`mvn`命令触发SpotBugs代码检查：
+```xml
+<build>
+    <pluginManagement>
+        <plugins>
+            <!-- SpotBugs Maven Plugin -->
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${spotbugs-maven-plugin.version}</version>
+                <configuration>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.mebigfatguy.fb-contrib</groupId>
+                            <artifactId>fb-contrib</artifactId>
+                            <version>7.7.4</version>
+                        </plugin>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.12.0</version>
+                        </plugin>
+                    </plugins>
+                </configuration>
+                <!-- 为了和SpotBugs Annotations保持版本一致 -->
+                <dependencies>
+                    <dependency>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs</artifactId>
+                        <version>${spotbugs.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </pluginManagement>
+</build>
+```
+{: file="pom.xml" }
+加好以上两个配置后，就成功将SpotBugs能力集成到Maven项目了。
+
+接下来在项目根目录执行以下命令，了解插件提供的goal和相关参数变量：
+
+```bash
+# 查看插件有哪些goal
+mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin
+# 查看goal和详细参数
+mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin -Ddetail
+```
+
+#### 常用Goal
+
+`spotbugs-maven-plugin`有3个常用的goal：`spotbugs`，`check` 和 `gui`。
+
+- `spotbugs`负责核心的代码静态分析，输出文件报告；
+- `check`负责在检查到bug时，输出错误日志，在执行`check`时会先隐式调用goal`spotbugs`；
+- `gui`负责通过GUI界面化的方式，查看检测到的代码Bug和对应的代码位置。
+
+比如，在项目根目录执行：
+```bash
+# spotbugs基于字节码分析，所以需要先编译
+mvn clean compile spotbugs:check
+```
+以上命令最后会输出SpotBugs代码检查结果。
 
 
-### IDEA插件
+### IntelliJ IDEA插件
+![SpotBugs spotbugs-idea Plugin](/assets/img/post/spotbugs-idea-light.png){: .light .rounded-10 .shadow }
+![SpotBugs spotbugs-idea Plugin](/assets/img/post/spotbugs-idea-dark.png){: .dark .rounded-10 .shadow }
 
 
-
-
-
-
-插件扩展
-和SonarQube
-
-
-
-
-## 内部机制
+## 进阶用法
 
 
 Confidence
@@ -112,32 +212,16 @@ BugPattern
 Detector
 
 
+## 相关文档
+
+1. FindBugs™: <https://findbugs.sourceforge.net>
+2. SpotBugs: <https://spotbugs.github.io>
+3. sb-contrib™: <https://fb-contrib.sourceforge.net>
+4. Find Security Bugs: <https://find-sec-bugs.github.io>
+5. spotbugs-idea Plugin: <https://plugins.jetbrains.com/plugin/14014-spotbugs-idea>
 
 
-```shell
-mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin
-mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin -Ddetail
-```
 
-
-SpotBugs manual
-https://spotbugs.readthedocs.io/en/stable/
-
-
-CWE
-https://cwe.mitre.org/
-https://github.com/OWASP
-https://owasp.org/
-
-https://spotbugs.github.io
-https://spotbugs.readthedocs.io/en/stable/
-
-https://fb-contrib.sourceforge.net/
-https://find-sec-bugs.github.io/
-
-https://github.com/spotbugs
-https://github.com/findbugsproject
-
-
-https://github.com/JetBrains/spotbugs-intellij-plugin
-https://github.com/alibaba/arthas
+[^cwe]: CWE: <https://cwe.mitre.org>
+[^owasp]: OWASP: <https://owasp.org>
+[^arthas]: Alibaba Arthas: <https://arthas.aliyun.com>
