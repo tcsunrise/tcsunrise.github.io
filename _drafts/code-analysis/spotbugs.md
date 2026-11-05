@@ -104,6 +104,7 @@ SpotBugs虽说是用来检查Java程序代码的，但其实其本身也是用Ja
 1. 在dependencies中配置`spotbugs-annotations`依赖；
 2. 在pluginManagement中配置`spotbugs-maven-plugin`插件。
 
+定义SpotBugs注解版本和插件版本：
 ```xml
 <properties>
     <spotbugs.version>4.8.6</spotbugs.version>
@@ -164,8 +165,7 @@ SpotBugs虽说是用来检查Java程序代码的，但其实其本身也是用Ja
 {: file="pom.xml" }
 加好以上两个配置后，就成功将SpotBugs能力集成到Maven项目了。
 
-接下来在项目根目录执行以下命令，了解插件提供的goal和相关参数变量：
-
+接下来在项目根目录执行以下命令，了解插件提供的goal和相关参数变量，选择需要执行的goal即可：
 ```bash
 # 查看插件有哪些goal
 mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin
@@ -178,7 +178,7 @@ mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin -Ddetail
 `spotbugs-maven-plugin`有3个常用的goal：`spotbugs`，`check` 和 `gui`。
 
 - `spotbugs`负责核心的代码静态分析，输出文件报告；
-- `check`负责在检查到bug时，输出错误日志，在执行`check`时会先隐式调用goal`spotbugs`；
+- `check`负责在检查到bug时，输出错误日志，在执行`check`时会先隐式地调用`spotbugs`；
 - `gui`负责通过GUI界面化的方式，查看检测到的代码Bug和对应的代码位置。
 
 比如，在项目根目录执行：
@@ -186,23 +186,36 @@ mvn help:describe -Dplugin=com.github.spotbugs:spotbugs-maven-plugin -Ddetail
 # spotbugs基于字节码分析，所以需要先编译
 mvn clean compile spotbugs:check
 ```
-以上命令最后会输出SpotBugs代码检查结果。
+以上命令最后会输出SpotBugs代码检查结果，认为是有问题的代码，SpotBugs将会终止编译构建过程。
 
 
 ### IntelliJ IDEA插件
+
+插件主页：<https://plugins.jetbrains.com/plugin/14014-spotbugs-idea>，安装步骤和其它IDEA插件
+一样。
+
+安装好之后，可以通过插件界面查看当前项目代码中的Bug以及源代码位置，如下图：
 ![SpotBugs spotbugs-idea Plugin](/assets/img/post/spotbugs-idea-light.png){: .light .rounded-10 .shadow }
 ![SpotBugs spotbugs-idea Plugin](/assets/img/post/spotbugs-idea-dark.png){: .dark .rounded-10 .shadow }
+可以看到上图右侧区域，SpotBugs还给出了具体的代码问题分析，包括代码修正方案。
 
 
 ## 进阶用法
 
+SpotBugs支持很多参数，这些参数在以上命令行、Maven插件和IDEA插件三种使用方式中都可以指定，只不过每
+种使用方式，指定参数的方式会有所不同。
 
-Confidence
-Rank
+
+#### findbugs.xml
+
+在SpotBugs以及其插件中，都会有个`findbugs.xml`，这个文件定义了所能识别的Bug或者有问题的代码模式。
+
+
+
+
 
 Filter file
 
-findbugs.xml
 
 BugCategory 
 BugCode 
