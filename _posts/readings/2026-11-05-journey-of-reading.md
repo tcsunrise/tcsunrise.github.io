@@ -49,16 +49,16 @@ tags:
 <div class="reading-timeline" markdown="1">
 
 **2026-09-10** _ZooKeeper: Distributed Process Coordination_
-
 1. 2026年10月10日，第一次阅读结束。
 
+**2026-09-06** _Code: The Hidden Language of Computer Hardware and Software, 2nd Edition_
+- 阅读中
+
 **2026-09-05** _Designing Data-Intensive Applications_
+- 长期阅读
 
-1. 长期阅读
-
-**2026-08-01** _Java Concurrency in Practice_
-
-1. 长期阅读
+**2024-10-20** _Java Concurrency in Practice_
+- 长期阅读
 
 </div>
 
