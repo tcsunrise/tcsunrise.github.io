@@ -205,21 +205,25 @@ mvn clean compile spotbugs:check
 SpotBugs支持很多参数，这些参数在以上命令行、Maven插件和IDEA插件三种使用方式中都可以指定，只不过每
 种使用方式，指定参数的方式会有所不同。
 
-
 #### findbugs.xml
 
-在SpotBugs以及其插件中，都会有个`findbugs.xml`，这个文件定义了所能识别的Bug或者有问题的代码模式。
+在SpotBugs以及其插件中，都会有个`findbugs.xml`文件，这个文件定义了所能识别的Bug或者有问题的代码模
+式，例如：spotbugs [findbugs.xml](https://github.com/spotbugs/spotbugs/blob/6816eb256805aa6eed1dced23e6a4aea08cc6660/spotbugs/etc/findbugs.xml)、
+sb-contrib™ [findbugs.xml](https://github.com/mebigfatguy/fb-contrib/blob/d07b039b6d474d53b59c1b1b1d257fd765b9b82b/etc/findbugs.xml)、
+和find-sec-bugs [findbugs.xml](https://github.com/find-sec-bugs/find-sec-bugs/blob/ba1fa607d0640fda8a26e5479c87c1a98394c6d3/findsecbugs-plugin/src/main/resources/metadata/findbugs.xml)。
+
+从中可以看出，SpotBugs对Bug代码模式从大到小分为了三个层级，分别是：
+- **Bug Category**：Bug模式分类。例如BAD_PRACTICE类别：违反代码最佳实践的代码；PERFORMANCE类别：
+会对程序性能造成影响的代码等等，_一个Category包括了多个Abbreviation_；
+- **Bug Abbreviation**：Bug模式缩写。缩写在Category分出了多个Abbreviation，例如类别BAD_PRACTICE
+可分为缩写CN、Co和Dm等；类别PERFORMANCE可以分为缩写Bx、IIL和Dm等，_一个Abbreviation可以归类到多
+个Category_；
+- **Bug Pattern**：Bug模式。模式是指具体的某一个代码问题，而且往往有对应的CWE ID，例如：Bug模式CN_IDIOM_NO_SUPER_CALL
+对应的CWE ID是[CWE-580](https://cwe.mitre.org/data/definitions/580.html)，DMI_EMPTY_DB_PASSWORD
+对应的CWE ID是[CWE-259](https://cwe.mitre.org/data/definitions/259.html)。
 
 
-
-
-
-Filter file
-
-
-BugCategory 
-BugCode 
-BugPattern 
+#### Filter file
 
 
 Detector
@@ -234,9 +238,7 @@ Detector
 5. spotbugs-idea Plugin: <https://plugins.jetbrains.com/plugin/14014-spotbugs-idea>
 
 
-https://github.com/spotbugs/spotbugs/blob/6816eb256805aa6eed1dced23e6a4aea08cc6660/spotbugs/etc/findbugs.xml
-https://github.com/mebigfatguy/fb-contrib/blob/d07b039b6d474d53b59c1b1b1d257fd765b9b82b/etc/findbugs.xml
-https://github.com/find-sec-bugs/find-sec-bugs/blob/ba1fa607d0640fda8a26e5479c87c1a98394c6d3/findsecbugs-plugin/src/main/resources/metadata/findbugs.xml
+
 
 
 
