@@ -1,5 +1,5 @@
 ---
-title: My Journey of Reading
+title: Reading | My Journey of Reading
 date: 2026-11-05
 description: 按时间线梳理一下自己系统地认真地看过的材料，书、论文、博客等等。
 tags:
